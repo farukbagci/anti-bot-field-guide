@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pytest
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Byte-compile every module
+        run: python -m compileall -q detect.py tests
+
+      - name: Run tests
+        run: python -m pytest tests/ -q
+
+      - name: Smoke-test the CLI, offline
+        run: |
+          echo '{"status": 403, "headers": {"cf-ray": "0000000000000000-XXX", "server": "cloudflare"}, "body": "<html><head><title>Just a moment...</title></head></html>"}' > record.json
+          python detect.py --from-json record.json
+          python detect.py --from-json - --json < record.json
+          rm record.json

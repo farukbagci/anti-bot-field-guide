@@ -1,0 +1,33 @@
+# Never commit proxy lists, credentials or captured sessions.
+proxy*.txt
+*_proxy*.txt
+*proxies*.txt
+.env
+.env.*
+*.pem
+*.key
+chrome-profile/
+
+# Harvested data. Committed samples must be added explicitly.
+*.jsonl
+!sample.jsonl
+!examples/*.jsonl
+output/
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
