@@ -216,6 +216,19 @@ def test_akamai_access_denied_reference_page():
     assert result["state"] == STATE_BLOCK
 
 
+def test_akamai_bm_s_cookie_on_clean_response():
+    headers = [
+        ("content-type", "text/html"),
+        ("set-cookie", "bm_s=PLACEHOLDER; Domain=.example.com; Path=/; Secure; HttpOnly"),
+    ]
+
+    result = detect(200, headers, HTML.format("search results " * 200))
+
+    assert result["vendor"] == "Akamai Bot Manager"
+    assert result["confidence"] == "medium"
+    assert result["state"] == STATE_CLEAR
+
+
 # --------------------------------------------------------------------------
 # Imperva / Incapsula
 # --------------------------------------------------------------------------

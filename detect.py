@@ -229,6 +229,7 @@ VENDORS = [
             {"kind": "cookie", "name": "ak_bmsc", "weight": 5},
             {"kind": "cookie", "name": "bm_sv", "weight": 4},
             {"kind": "cookie", "name": "bm_mi", "weight": 3},
+            {"kind": "cookie", "name": "bm_s", "weight": 3},
             {"kind": "header", "name": "server", "contains": "akamaighost", "weight": 5},
             {"kind": "header", "name": "x-akamai-request-id", "weight": 4},
             {"kind": "body", "contains": "reference #", "weight": 3, "state": STATE_BLOCK},
