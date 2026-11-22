@@ -128,6 +128,7 @@ possible identifier. Newer deployments serve the sensor script from first-party 
 | cookie | `ak_bmsc` | 5 | |
 | cookie | `bm_sv` | 4 | |
 | cookie | `bm_mi` | 3 | |
+| cookie | `bm_s` | 3 | |
 | header | `server: AkamaiGHost` | 5 | |
 | header | `x-akamai-request-id` | 4 | |
 | body | `Reference #` | 3 | block |
@@ -142,6 +143,47 @@ without verifying against your own captures.
 
 Akamai deny pages carry a `Reference #`. Log it verbatim; it is the identifier a site operator will
 ask for.
+
+### SBSD (Server-Side Bot Detection)
+
+Akamai deployments may use an additional SBSD mechanism alongside the traditional Bot Manager sensor flow.
+
+The following characteristics have been observed during SBSD interactions:
+
+**1. SBSD endpoint**
+
+The browser requests an SBSD-related endpoint containing a `v` query parameter with a UUID-like value.
+
+Two URL variations have been observed:
+
+- `v=<UUID>&t=<value>` - observed in challenge-related flows.
+- `v=<UUID>` - observed in flows without the additional `t` parameter.
+
+The presence of `t` is an observed distinction in these captures, not a universal guarantee of a challenge.
+
+**2. POST request payload**
+
+In the traditional Akamai sensor submission pattern, the payload uses a `sensor` field. In the SBSD requests observed here, the POST payload instead uses a `body` field.
+
+Illustrative structures:
+
+Traditional sensor submission:
+```json
+{"sensor": "PLACEHOLDER"}
+```
+
+Observed SBSD submission:
+```json
+{"body": "PLACEHOLDER"}
+```
+
+**3. `bm_s` cookie**
+
+The SBSD interaction can set a `bm_s` cookie through the `Set-Cookie` response header.
+
+In the captures observed here, the cookie appeared on several responses in the flow: on responses before the SBSD POST request, and again on the response to the final POST in the sequence.
+
+Because it appears at more than one point in the flow, `bm_s` is a useful additional indicator of Akamai SBSD activity. Its presence alone does not establish that a request has been blocked.
 
 ---
 
